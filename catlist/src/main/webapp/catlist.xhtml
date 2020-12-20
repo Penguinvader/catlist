@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags">
+<ui:composition template="layout.xhtml">
+	<ui:define name="content">
+		<h:form id="catForm">
+			<p:panel header="Cat Info" id="catInfoPnl">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="name" value="Cat name: " />
+					<p:inputText id="name" size="40"
+						value="#{catController.catUiTO.name}" required="true"
+						requiredMessage="Please enter cat name " />
+					<p:outputLabel for="catpassword" value="Color: " />
+					<p:inputText id="catpassword" size="40"
+						value="#{catController.catUiTO.color}" required="true"/>
+					<p:outputLabel for="catage" value="Age: " />
+					<p:inputText id="catage"
+						value="#{catController.catUiTO.age}" size="40"
+						required="true">
+					</p:inputText>
+					<p:outputLabel for="catimage" value="Image link: " />
+					<p:inputText id="catimage"
+								 value="#{catController.catUiTO.image}" size="40">
+					</p:inputText>
+					<h:commandButton value="#{catController.actionLabel}"
+						action="#{catController.doSaveInfoCat}">
+						<f:ajax execute="catForm" render="catlist catInfoPnl" />
+					</h:commandButton>
+				</h:panelGrid>
+			</p:panel>
+			<p:panel header="Cat List" id="catlist">
+				<p:dataTable id="table" var="cat"
+					value="#{catController.catUiToList}">
+					<p:column>
+						<f:facet name="header">Cat Id</f:facet>
+						<h:outputText value="#{cat.id}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">Name</f:facet>
+						<h:outputText value="#{cat.name}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">Color </f:facet>
+						<h:outputText value="#{cat.color}">
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">Age </f:facet>
+						<h:outputText value="#{cat.age}">
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">Image </f:facet>
+						<h:graphicImage value="#{cat.image}" width="100%">
+						</h:graphicImage>
+					</p:column>
+					<p:column id="action">
+						<f:facet name="header">Action</f:facet>
+						<h:commandLink value="Edit" style="color:green"
+							action="#{catController.editCat(cat)}">
+							<f:ajax execute="action" render="catForm" />
+						</h:commandLink> /
+						  <sec:authorize access="hasRole('ROLE_ADMIN')">
+							<h:commandLink value="Delete" style="color:red"
+								action="#{catController.deleteCat(cat)}">
+								<f:ajax execute="action" render="table" />
+							</h:commandLink>
+						</sec:authorize>
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>
